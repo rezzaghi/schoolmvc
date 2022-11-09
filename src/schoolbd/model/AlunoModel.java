@@ -6,6 +6,14 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class AlunoModel {
+
+	String rg;
+	String nome;
+	String aulaId;
+	int aprovado;
+	int idade;
+	int media;
+
 	public AlunoModel(String rg, String nome, String aulaId, int aprovado, int idade, int media) {
 		this.rg = rg;
 		this.nome = nome;
@@ -15,15 +23,7 @@ public class AlunoModel {
 		this.media = media;
 	}
 
-	public AlunoModel() {
-	}
-
-	String rg;
-	String nome;
-	String aulaId;
-	int aprovado;
-	int idade;
-	int media;
+	public AlunoModel() {}
 
 	public String getRg() {
 		return rg;

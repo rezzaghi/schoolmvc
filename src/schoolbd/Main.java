@@ -55,36 +55,6 @@ public class Main {
 		alunos =  retriveAlunosFromDatabase(connection);
 		schoolCtrl = new SchoolController(alunos, aulas, professores, schoolView);
     	schoolCtrl.showAlunoView();
-    	
-    	/*
-		Aluno alun = null;
-		Aula aul = null;
-		Professor prof = null;
-		prof = new Professor();
-		alun = new Aluno();
-		aul = new Aula();
-		
-		//começo do bimestre
-		
-		//zera todas as aprovações
-		alun.novoAno();
-		alun.novoAluno("111", "bruno", 20, 2, "0000");
-
-		//mostrando alunos, professores e aulas
-		alun.MostrarAlunos();
-		prof.mostrarProf();
-		aul.mostrarAula();
-		
-		
-		//aprovar os alunos
-		alun.aprovarAluno();
-		alun.removerAluno("111");
-
-
-		System.out.println("---------ALUNOS APOS APROVAÇÃO-------------");
-		alun.MostrarAlunos();
-		*/
-    	
 
     }
     
