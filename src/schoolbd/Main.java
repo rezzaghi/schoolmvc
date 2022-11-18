@@ -1,10 +1,12 @@
 package schoolbd;
 
+import java.io.Console;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import schoolbd.controller.SchoolController;
 import schoolbd.model.AlunoModel;
@@ -16,44 +18,67 @@ public class Main {
     public static void main(String[] args) {
 
 	Connection connection = null;
+        Scanner reader = new Scanner(System.in);
 	try {
 	    connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbcdemo", "root", "");
 	} catch (Exception e) {
 	    System.out.println(e);
 	}
+	boolean endProgram = false;
+	while(!endProgram) {
+            ArrayList<AlunoModel> alunos = retriveAlunosFromDatabase(connection);
+            ArrayList<AulaModel> aulas = retriveAulasFromDatabase(connection);
+            ArrayList<ProfessorModel> professores = retriveProfessoresFromDatabase(connection);
+            SchoolView schoolView = new SchoolView();
+            SchoolController schoolCtrl = new SchoolController(alunos, aulas, professores, schoolView);
 
-	ArrayList<AlunoModel> alunos = retriveAlunosFromDatabase(connection);
-	ArrayList<AulaModel> aulas = retriveAulasFromDatabase(connection);
-	ArrayList<ProfessorModel> professores = retriveProfessoresFromDatabase(connection);
+            System.out.println("pressione 1 para mostrar alunos, professores e aulas\npressione 2 para adicionar aluno\npressione 3 para remover aluno\npressione 4 para recomecar o ano\npressione 5 para aprovar alunos\npressione qualquer outro numero para terminar o programa: ");	
+	    int operacao = reader.nextInt();
+            String rg;
+            String nome;
+            int idade;
+            int media;
+            String aulaId;
 
-	SchoolView schoolView = new SchoolView();
-
-	SchoolController schoolCtrl = new SchoolController(alunos, aulas, professores, schoolView);
-
-	schoolCtrl.showAlunoView();
-	schoolCtrl.showAulaView();
-	schoolCtrl.showProfessorView();
-
-	addNewAluno(connection, "111", "bruno", 20, 2, "0000");
-	alunos = retriveAlunosFromDatabase(connection);
-	schoolCtrl = new SchoolController(alunos, aulas, professores, schoolView);
-	schoolCtrl.showAlunoView();
-
-	removeAluno(connection, "111");
-	alunos = retriveAlunosFromDatabase(connection);
-	schoolCtrl = new SchoolController(alunos, aulas, professores, schoolView);
-	schoolCtrl.showAlunoView();
-
-	novoAno(connection);
-	alunos = retriveAlunosFromDatabase(connection);
-	schoolCtrl = new SchoolController(alunos, aulas, professores, schoolView);
-	schoolCtrl.showAlunoView();
-
-	aproveAluno(connection);
-	alunos = retriveAlunosFromDatabase(connection);
-	schoolCtrl = new SchoolController(alunos, aulas, professores, schoolView);
-	schoolCtrl.showAlunoView();
-
+	    switch(operacao) {
+	    	case 1: 
+                    schoolCtrl.showAulaView();
+                    schoolCtrl.showProfessorView();
+                    schoolCtrl.showAlunoView();
+	    	    break;
+	    	case 2:
+	    	    System.out.println("RG do aluno: ");
+	    	    rg = reader.next();
+	    	    System.out.println("Nome do aluno: ");
+	    	    nome = reader.next();
+	    	    System.out.println("Idade do aluno: ");
+	    	    idade = reader.nextInt();
+	    	    System.out.println("Media do aluno: ");
+	    	    media = reader.nextInt();
+	    	    System.out.println("Id da aula: ");
+	    	    aulaId = reader.next();
+	    	    addNewAluno(connection,rg,nome,idade,media,aulaId);
+	    	    break;
+	    	case 3:
+	    	    System.out.println("RG do aluno: ");
+	    	    rg = reader.next();
+	    	    removeAluno(connection, rg);
+	    	    break;
+	    	case 4:
+	    	    novoAno(connection);
+	    	    break;
+	    	case 5:
+                    aproveAluno(connection);
+                    break;
+                default:
+                    System.out.println("TERMINO DO PROGRAMA");
+                    endProgram = true;
+                    break;
+	    }
+	    
+	}
+	reader.close();
+	
     }
 
     private static void addNewAluno(Connection connection, String rg, String nome, int idade, int media,
@@ -83,9 +108,7 @@ public class Main {
 	try {
 	    Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
 	    ResultSet profResultSet = statement.executeQuery("select * from professor");
-	    System.out.println("------PROFESSORES-----");
 	    while (profResultSet.next()) {
-		System.out.println("----------------------");
 		professores.add(new ProfessorModel(profResultSet.getString(1), profResultSet.getString(2),
 			profResultSet.getString(3)));
 
